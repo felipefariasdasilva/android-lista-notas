@@ -29,14 +29,14 @@ import static com.felipe.ceep.ui.activity.NotaActivityConstantes.POSICAO_INVALID
 public class ListaNotasActivity extends AppCompatActivity {
 
 
-
+    public static final String TITULO_APP_BAR = "Notas";
     private ListaNotasAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_notas);
-
+        setTitle(TITULO_APP_BAR);
         List<Nota> todasNotas = pegarTodasNotas();
         configurarRecyclerView(todasNotas);
 
@@ -61,9 +61,6 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     private List<Nota> pegarTodasNotas() {
         NotaDAO dao = new NotaDAO();
-        for (int i = 0; i < 10; i++) {
-            dao.insere(new Nota("Titulo " + (i+1), "Descricao " + (i+1)));
-        }
         return dao.todos();
     }
 
@@ -85,11 +82,6 @@ public class ListaNotasActivity extends AppCompatActivity {
                 int posicaoRecebida = data.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
                 if(ehPosicaoValida(posicaoRecebida)){
                     alterar(notaRecebida, posicaoRecebida);
-                }else{
-                    Toast.makeText(
-                            this,
-                            "Ocorreu um problema na alteração da nota",
-                            Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -124,7 +116,7 @@ public class ListaNotasActivity extends AppCompatActivity {
     }
 
     private boolean temNota(@Nullable Intent data) {
-        return data.hasExtra(CHAVE_NOTA);
+        return data != null && data.hasExtra(CHAVE_NOTA);
     }
 
     private boolean resultadoOk(int resultCode) {
@@ -138,6 +130,10 @@ public class ListaNotasActivity extends AppCompatActivity {
     private void configurarRecyclerView(List<Nota> todasNotas) {
         RecyclerView listaNotas = findViewById(R.id.lista_notas_recyclerview);
         configurarAdapter(todasNotas, listaNotas);
+        configurarItemTouchHelper(listaNotas);
+    }
+
+    private void configurarItemTouchHelper(RecyclerView listaNotas) {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new NotaItemTouchHelperCallback(adapter));
         itemTouchHelper.attachToRecyclerView(listaNotas);
     }
