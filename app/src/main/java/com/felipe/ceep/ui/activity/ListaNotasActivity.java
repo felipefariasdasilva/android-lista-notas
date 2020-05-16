@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import com.felipe.ceep.R;
 import com.felipe.ceep.dao.NotaDAO;
 import com.felipe.ceep.model.Nota;
 import com.felipe.ceep.ui.recyclerView.adapter.ListaNotasAdapter;
+import com.felipe.ceep.ui.recyclerView.adapter.listener.OnItemClickListener;
 
 import java.util.List;
 
@@ -54,6 +56,9 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     private List<Nota> pegarTodasNotas() {
         NotaDAO dao = new NotaDAO();
+        for (int i = 0; i < 10; i++) {
+            dao.insere(new Nota("Titulo " + (i+1), "Descricao " + (i+1)));
+        }
         return dao.todos();
     }
 
@@ -97,5 +102,14 @@ public class ListaNotasActivity extends AppCompatActivity {
     private void configurarAdapter(List<Nota> todasNotas, RecyclerView listaNotas) {
         adapter = new ListaNotasAdapter(this, todasNotas);
         listaNotas.setAdapter(adapter);
+        adapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(Nota nota) {
+                Toast.makeText(
+                        ListaNotasActivity.this,
+                        nota.getTitulo(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
